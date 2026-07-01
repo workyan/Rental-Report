@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "input": "/Users/cc/.codex/generated_images/019f1bb1-0443-73e1-bb36-e36b9ccf4ba2/ig_0724b4e85139f464016a44887c42e0819abba74430b821223a.png",
+  "output": "/Users/cc/StudioProjects/Rental-Report/assets/icons/history_report.png",
+  "background_rgb": [
+    255,
+    0,
+    255
+  ],
+  "threshold": 90.0,
+  "feather_threshold": 110.0,
+  "trimmed": true,
+  "padding": 8,
+  "width": 827,
+  "height": 1028,
+  "transparent_pixels": 811880,
+  "opaque_pixels": 760636
+}

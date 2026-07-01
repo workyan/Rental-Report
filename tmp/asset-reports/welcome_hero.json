@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "input": "/Users/cc/.codex/generated_images/019f1bb1-0443-73e1-bb36-e36b9ccf4ba2/ig_08ed759ed4b5b4bd016a44883686948199bc0828ecaf43f37f.png",
+  "output": "/Users/cc/StudioProjects/Rental-Report/assets/images/welcome_hero.png",
+  "background_rgb": [
+    255,
+    0,
+    255
+  ],
+  "threshold": 24.0,
+  "feather_threshold": 48.0,
+  "trimmed": true,
+  "padding": 8,
+  "width": 1122,
+  "height": 1402,
+  "transparent_pixels": 940037,
+  "opaque_pixels": 633007
+}
