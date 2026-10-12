@@ -1,0 +1,2 @@
+Icon: Rental Report app icon.
+Feature graphic: Rental inspections. Room by room.

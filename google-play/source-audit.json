@@ -1,0 +1,14 @@
+{
+  "reviewedCommit": "e58e4fb43238421e7b67a011d376a1a19efea62b",
+  "scope": "Existing Flutter source, not an Android build verification.",
+  "sourceFiles": {
+    "lib/main.dart": "b29852ed839e68836748a6dc293bbfec5397a699949aecf9f59dd11bb4429cfb"
+  },
+  "existingAdsOrAnalyticsSdkFound": false,
+  "screenshotsSource": "Real iOS raster references from app-store-shot-factory, without translated UI; draft only.",
+  "releaseIssues": [
+    "重要：AppModel.empty() 每次启动创建空模型；未实现跨重启记录保存。上架前补持久化并验证重启及升级。",
+    "没有入住与退租自动对照实现，不宣传自动损坏对比。",
+    "当前代码中的 PDF 包含照片、说明和签名；仍需在 Android 验证拍照、签名、导出和分享。"
+  ]
+}

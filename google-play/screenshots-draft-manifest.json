@@ -1,0 +1,62 @@
+[
+  {
+    "file": "screenshots-draft/01-room-by-room-1080x1920.png",
+    "source": "source/ios-reference/01-room-by-room.png",
+    "sourcePlatform": "ios-reference",
+    "locale": "en-US",
+    "headline": "Inspect each\nroom clearly",
+    "width": 1080,
+    "height": 1920,
+    "status": "draft-not-for-upload"
+  },
+  {
+    "file": "screenshots-draft/02-inspection-type-1080x1920.png",
+    "source": "source/ios-reference/02-inspection-type.png",
+    "sourcePlatform": "ios-reference",
+    "locale": "en-US",
+    "headline": "Start the right\nwalkthrough",
+    "width": 1080,
+    "height": 1920,
+    "status": "draft-not-for-upload"
+  },
+  {
+    "file": "screenshots-draft/03-photos-notes-1080x1920.png",
+    "source": "source/ios-reference/03-photos-notes.png",
+    "sourcePlatform": "ios-reference",
+    "locale": "en-US",
+    "headline": "Keep photos\nwith each room",
+    "width": 1080,
+    "height": 1920,
+    "status": "draft-not-for-upload"
+  },
+  {
+    "file": "screenshots-draft/04-issues-1080x1920.png",
+    "source": "source/ios-reference/04-issues.png",
+    "sourcePlatform": "ios-reference",
+    "locale": "en-US",
+    "headline": "Record wear\nand damage",
+    "width": 1080,
+    "height": 1920,
+    "status": "draft-not-for-upload"
+  },
+  {
+    "file": "screenshots-draft/05-signatures-1080x1920.png",
+    "source": "source/ios-reference/05-signatures.png",
+    "sourcePlatform": "ios-reference",
+    "locale": "en-US",
+    "headline": "Complete the\nhandoff",
+    "width": 1080,
+    "height": 1920,
+    "status": "draft-not-for-upload"
+  },
+  {
+    "file": "screenshots-draft/06-pdf-report-1080x1920.png",
+    "source": "source/ios-reference/06-pdf-report.png",
+    "sourcePlatform": "ios-reference",
+    "locale": "en-US",
+    "headline": "Share a clear\nPDF report",
+    "width": 1080,
+    "height": 1920,
+    "status": "draft-not-for-upload"
+  }
+]

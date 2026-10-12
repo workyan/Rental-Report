@@ -1,0 +1,1 @@
+Put real Android English screenshots here using filenames from capture-plan.json. Also add capture-provenance.json as described in the package README. This directory currently contains no Android captures.

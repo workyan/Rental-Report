@@ -1,0 +1,9 @@
+{
+  "brand": "Rental Report",
+  "bg": "#F0F4F8",
+  "dark": "#142B43",
+  "accent": "#2C6AA8",
+  "image": "source/feature-visual.png",
+  "tagline": "Rental inspections.\nRoom by room.",
+  "icon": "source/app-icon.png"
+}

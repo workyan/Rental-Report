@@ -37,3 +37,7 @@ flutter run
 
 已有 App Store 截图和文档可供参考，需检查并替换其中的 iPhone、App Store 和中国区定价内容。
 
+
+## 已准备的 Google Play 信息与素材
+
+参阅 [google-play/README.md](google-play/README.md)。图标和横幅可用于商店；截图草稿仍需替换为 Android 正式构建的英文实拍。发布前注意 README 中列出的代码缺口。

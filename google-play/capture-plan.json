@@ -1,0 +1,59 @@
+{
+  "app": "Rental Report",
+  "locale": "en-US",
+  "output": {
+    "width": 1080,
+    "height": 1920
+  },
+  "status": "draft-using-real-ios-references",
+  "slides": [
+    {
+      "id": "01-room-by-room",
+      "scene": "room-list-progress",
+      "headline": "Inspect each\nroom clearly",
+      "androidFile": "01-room-by-room.png",
+      "altText": "Rental Report: inspect each room clearly.",
+      "sourceStatus": "Actual iOS reference. Final Android capture required."
+    },
+    {
+      "id": "02-inspection-type",
+      "scene": "inspection-type",
+      "headline": "Start the right\nwalkthrough",
+      "androidFile": "02-inspection-type.png",
+      "altText": "Rental Report: start the right walkthrough.",
+      "sourceStatus": "Actual iOS reference. Final Android capture required."
+    },
+    {
+      "id": "03-photos-notes",
+      "scene": "room-detail-photos",
+      "headline": "Keep photos\nwith each room",
+      "androidFile": "03-photos-notes.png",
+      "altText": "Rental Report: keep photos with each room.",
+      "sourceStatus": "Actual iOS reference. Final Android capture required."
+    },
+    {
+      "id": "04-issues",
+      "scene": "issue-detail",
+      "headline": "Record wear\nand damage",
+      "androidFile": "04-issues.png",
+      "altText": "Rental Report: record wear and damage.",
+      "sourceStatus": "Actual iOS reference. Final Android capture required."
+    },
+    {
+      "id": "05-signatures",
+      "scene": "signatures-review",
+      "headline": "Complete the\nhandoff",
+      "androidFile": "05-signatures.png",
+      "altText": "Rental Report: complete the handoff.",
+      "sourceStatus": "Actual iOS reference. Final Android capture required."
+    },
+    {
+      "id": "06-pdf-report",
+      "scene": "pdf-export-preview",
+      "headline": "Share a clear\nPDF report",
+      "androidFile": "06-pdf-report.png",
+      "altText": "Rental Report: share a clear pdf report.",
+      "sourceStatus": "Actual iOS reference. Final Android capture required."
+    }
+  ]
+}

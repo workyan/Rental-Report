@@ -27,3 +27,7 @@ Paid iPhone app for rental move-in and move-out inspection reports.
 - The title stays short enough to leave room for a highly searchable subtitle.
 
 This is not a trademark clearance result. It is a practical ASO naming choice.
+
+## Google Play handoff
+
+See [google-play/README.md](google-play/README.md) for English listing text, store graphics, screenshot drafts, Android capture instructions and release checks. Open [google-play/preview.html](google-play/preview.html) locally to review the materials.
