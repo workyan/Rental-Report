@@ -1,0 +1,86 @@
+[
+  {
+    "file": "screenshots-final/01-room-by-room-1080x1920.png",
+    "source": "source/android/01-room-by-room.png",
+    "sourcePlatform": "android",
+    "crop": {
+      "top": 64,
+      "bottom": 96
+    },
+    "locale": "en-US",
+    "headline": "Inspect each\nroom clearly",
+    "width": 1080,
+    "height": 1920,
+    "status": "visually-reviewed-real-android-marketing-asset"
+  },
+  {
+    "file": "screenshots-final/02-inspection-type-1080x1920.png",
+    "source": "source/android/02-inspection-type.png",
+    "sourcePlatform": "android",
+    "crop": {
+      "top": 64,
+      "bottom": 96
+    },
+    "locale": "en-US",
+    "headline": "Start the right\nwalkthrough",
+    "width": 1080,
+    "height": 1920,
+    "status": "visually-reviewed-real-android-marketing-asset"
+  },
+  {
+    "file": "screenshots-final/03-photos-notes-1080x1920.png",
+    "source": "source/android/03-photos-notes.png",
+    "sourcePlatform": "android",
+    "crop": {
+      "top": 64,
+      "bottom": 96
+    },
+    "locale": "en-US",
+    "headline": "Keep photos\nwith each room",
+    "width": 1080,
+    "height": 1920,
+    "status": "visually-reviewed-real-android-marketing-asset"
+  },
+  {
+    "file": "screenshots-final/04-issues-1080x1920.png",
+    "source": "source/android/04-issues.png",
+    "sourcePlatform": "android",
+    "crop": {
+      "top": 64,
+      "bottom": 96
+    },
+    "locale": "en-US",
+    "headline": "Record wear\nand damage",
+    "width": 1080,
+    "height": 1920,
+    "status": "visually-reviewed-real-android-marketing-asset"
+  },
+  {
+    "file": "screenshots-final/05-signatures-1080x1920.png",
+    "source": "source/android/05-signatures.png",
+    "sourcePlatform": "android",
+    "crop": {
+      "top": 64,
+      "bottom": 96
+    },
+    "locale": "en-US",
+    "headline": "Complete the\nhandoff",
+    "width": 1080,
+    "height": 1920,
+    "status": "visually-reviewed-real-android-marketing-asset"
+  },
+  {
+    "file": "screenshots-final/06-pdf-report-1080x1920.png",
+    "source": "source/android/06-pdf-report.png",
+    "sourcePlatform": "android",
+    "crop": {
+      "top": 64,
+      "bottom": 96
+    },
+    "locale": "en-US",
+    "headline": "Share a clear\nPDF report",
+    "width": 1080,
+    "height": 1920,
+    "status": "visually-reviewed-real-android-marketing-asset"
+  }
+]

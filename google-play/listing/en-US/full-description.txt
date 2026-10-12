@@ -7,14 +7,14 @@ RECORD EACH ROOM
 Review the room checklist, add notes and attach photos from the camera or photo picker. Mark items as good, needing cleaning, worn, damaged or missing.
 
 TRACK THE DETAILS
-Add issue notes and severity while you walk through the property, then review the inspection summary before exporting.
+Add issue notes and severity while you walk through the property. Inspection records and attached photos are saved locally so you can return to your work after restarting the app.
 
-CAPTURE SIGNATURES
-Add participant names and signatures on the device to complete the walkthrough record.
+COMPLETE THE HANDOFF
+Record participant names and confirmation dates as typed sign-offs. Review the inspection summary before exporting.
 
 EXPORT A PDF
-Generate a report with property details, room conditions, notes, photos and signatures. Save or share the exported file using the system share sheet.
+Generate a report with property details, room conditions, notes, room photos and typed sign-offs. Share the exported file using the system share sheet. Choose whether to include untouched rooms in the report.
 
-The core inspection workflow does not require an account. No advertising or analytics SDK is included in the current source.
+Core inspection features work offline without an account. The app includes no ads or subscriptions.
 
 Rental Report is a documentation tool. It does not provide legal advice, guarantee a deposit outcome or replace a locally required inspection form. Use the records as part of your own documentation process.

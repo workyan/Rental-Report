@@ -1,0 +1,85 @@
+{
+  "platform": "android",
+  "locale": "en-US",
+  "build": "1.0.0+1 (debug capture of actual app UI)",
+  "device": "Android API 35 ARM64 emulator; 1080×1920, density 320",
+  "applicationId": "com.cc.rentalreport",
+  "apkSha256": "9fbeb61aa2134da3aa6a7e7b0fa4108e69fe30f383c392400f4027cbacc2379c",
+  "capturedAt": "2026-10-12T10:45:55.862603+00:00",
+  "commitBeforeChanges": "dbb6982c5313ffb71a1e1558bfda6f43e7b06d3f",
+  "captureBridge": "Native debug-only intent extras; real widgets with deterministic sample data",
+  "slides": [
+    {
+      "id": "01-room-by-room",
+      "scene": "room-list-progress",
+      "file": "01-room-by-room.png",
+      "scrollPixels": 0,
+      "scrollTarget": null,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "a6b188927857741e0afa38ae152379a5e71e3f298f4bb64ec47fe9dbd0073583",
+      "runtimeErrorLogEmpty": true,
+      "foregroundActivityConfirmed": true
+    },
+    {
+      "id": "02-inspection-type",
+      "scene": "inspection-type",
+      "file": "02-inspection-type.png",
+      "scrollPixels": 0,
+      "scrollTarget": null,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "439da3bc1631bf470aec5add5c69cacea877ed0821e7c8b07130929e5eeace48",
+      "runtimeErrorLogEmpty": true,
+      "foregroundActivityConfirmed": true
+    },
+    {
+      "id": "03-photos-notes",
+      "scene": "room-detail-photos",
+      "file": "03-photos-notes.png",
+      "scrollPixels": 0,
+      "scrollTarget": null,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "54f26dd8c5a78ad6da4aa99dbfff697f3c537c3ae2defe347b59b4b68694ee5c",
+      "runtimeErrorLogEmpty": true,
+      "foregroundActivityConfirmed": true
+    },
+    {
+      "id": "04-issues",
+      "scene": "issue-detail",
+      "file": "04-issues.png",
+      "scrollPixels": 0,
+      "scrollTarget": null,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "7c359d7fa2c937a26388a52179e52d7087d25d9c8b32409ec8f87354581a70f6",
+      "runtimeErrorLogEmpty": true,
+      "foregroundActivityConfirmed": true
+    },
+    {
+      "id": "05-signatures",
+      "scene": "signatures-review",
+      "file": "05-signatures.png",
+      "scrollPixels": 0,
+      "scrollTarget": null,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "112aaf86fd3171e4c3f150ddd270e58ae199e17bd979e1309de52b37ff627dd7",
+      "runtimeErrorLogEmpty": true,
+      "foregroundActivityConfirmed": true
+    },
+    {
+      "id": "06-pdf-report",
+      "scene": "pdf-export-preview",
+      "file": "06-pdf-report.png",
+      "scrollPixels": 0,
+      "scrollTarget": null,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "236b8a18ee5efa0bafab6a3959db6ebef302f45052a5b3bf3b45e4c0ac0912b3",
+      "runtimeErrorLogEmpty": true,
+      "foregroundActivityConfirmed": true
+    }
+  ]
+}

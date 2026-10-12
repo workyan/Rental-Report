@@ -1,0 +1,35 @@
+{
+  "reviewedAt": "2026-10-12T10:53:36.257487+00:00",
+  "assetStatus": "ready for the English phone listing; compare against signed release before submitting",
+  "visualDirection": "房屋记录编辑风格：海军蓝、浅底、衬线标题与真实照片",
+  "reviewMethod": "Visual review of six-slide contact sheet, real source images and selected full-size exports; source code review for feature claims.",
+  "checks": {
+    "actualAndroidUI": true,
+    "englishUI": true,
+    "noRepaintedOrInventedAppControls": true,
+    "headlineAndScreenshotDoNotOverlap": true,
+    "appUIWidthAtLeast70Percent": true,
+    "keyResultsAndControlsVisible": true,
+    "oneBenefitPerSlide": true,
+    "noPricingRankingAwardsOrDownloadClaims": true,
+    "noBlankOrPlaceholderExport": true,
+    "noSimulatorRuntimeErrors": true,
+    "rawCaptureHashesVerified": true
+  },
+  "assetSha256": {
+    "graphics/feature-graphic-1024x500.png": "96b23107f2766ff31b28b6c383d43fee9ad92347b87acf2bf7c2a58e68288756",
+    "graphics/icon-512.png": "8154cb81e468256ca7f29b6a359181040da47f50cc42e0f89c33d0496c986d5f",
+    "screenshots-final/01-room-by-room-1080x1920.png": "791663253e869dca8be04265a1e2895aac452a043347d719c928c047c9534554",
+    "screenshots-final/02-inspection-type-1080x1920.png": "bea1583cf454a6006eb4e677253a6704c00c63b5f156e811e31ef0cbfa382a48",
+    "screenshots-final/03-photos-notes-1080x1920.png": "28a00cd36e9d926e669c81d5c0aa08778a958f1fd8646bb066c30e6cbded8c1b",
+    "screenshots-final/04-issues-1080x1920.png": "2f779b7295e1c119748698980a4a3c73315cc3043ab35fb34b277009b95ad1c2",
+    "screenshots-final/05-signatures-1080x1920.png": "db340215428c64ebb221b6ee6a471ddd3e5c3a59367e26b51c6b647a7d1e599a",
+    "screenshots-final/06-pdf-report-1080x1920.png": "f578adc2e1fa239200a7f08a7bf1544acfead2adc6142081de105bcd438eee9e"
+  },
+  "remainingReleaseSteps": [
+    "Set up the local upload signing key and build/test the release AAB.",
+    "Publish the Android English privacy/support pages and confirm the contact email.",
+    "Complete applicable Play Console declarations and testing requirements."
+  ],
+  "pdfVisualReview": "Two actual exported PDF pages rendered and checked: room photos, notes, typed names and page numbers; no clipped section borders."
+}

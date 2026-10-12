@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-12T10:46:43.111506+00:00",
+  "source": "Actual Android Export PDF button; system share sheet opened",
+  "pages": 2,
+  "imagesPerPage": [
+    3,
+    0
+  ],
+  "roomPhotosNotesAndTypedNamesPresent": true,
+  "pageNumbersPresent": true,
+  "sha256": "bc175a3e6b8ff938352b77625b1bd537cf8e60950531d2b34cf16c3b9dcf657a",
+  "apkSha256": "9fbeb61aa2134da3aa6a7e7b0fa4108e69fe30f383c392400f4027cbacc2379c",
+  "pdfBytes": 11407177
+}

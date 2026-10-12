@@ -5,7 +5,7 @@
 ## 当前代码观察
 
 - 未发现开发者服务端、账号、广告、分析或崩溃上报 SDK。
-- 处理内容：property details, notes, photographs and participant signatures。
+- 处理内容：property details, notes, photographs and typed participant names / confirmation dates。
 - 核心处理在设备完成；用户主动分享时由系统和所选接收应用处理内容。
 - 私有 GitHub 仓库不参与应用用户数据处理。
 
@@ -26,3 +26,5 @@ Rental Report 的相机/照片由 image_picker 使用系统能力；不要为了
 若加入 AdMob、Firebase Analytics、Crashlytics、云同步、登录或支付 SDK，重新检查本表和隐私政策。
 
 [官方定义与填写指引](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en)
+
+本轮已补本机记录和照片保存；PDF 导出包含房间照片、问题备注及输入姓名确认。报告和副本由用户主动选择系统分享，未新增服务器或分析 SDK。

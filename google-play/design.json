@@ -5,5 +5,9 @@
   "accent": "#2C6AA8",
   "image": "source/feature-visual.png",
   "tagline": "Rental inspections.\nRoom by room.",
-  "icon": "source/app-icon.png"
+  "icon": "source/app-icon.png",
+  "applicationId": "com.cc.rentalreport",
+  "captureChannel": "rentalreport/screenshot",
+  "languageDefine": null,
+  "style": "房屋记录编辑风格：海军蓝、浅底、衬线标题与真实照片"
 }

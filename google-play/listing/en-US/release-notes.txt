@@ -1,2 +1,1 @@
-Initial Android release.
-
+Document move-in, move-out and routine inspections with room photos, notes and typed sign-offs. Save records on your device and share PDF reports.

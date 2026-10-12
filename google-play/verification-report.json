@@ -1,10 +1,10 @@
 {
-  "checkedAt": "2026-10-12T09:16:19.991Z",
-  "mode": "ios-reference-draft",
+  "checkedAt": "2026-10-12T10:46:47.130Z",
+  "mode": "android",
   "listingLengths": {
     "title": 26,
-    "shortDescription": 78,
-    "fullDescription": 1146
+    "shortDescription": 76,
+    "fullDescription": 1272
   },
   "files": [
     {
@@ -14,8 +14,7 @@
       "channels": 4,
       "alpha": true,
       "bytes": 421970,
-      "nonBlank": true,
-      "sha256": "8154cb81e468256ca7f29b6a359181040da47f50cc42e0f89c33d0496c986d5f"
+      "nonBlank": true
     },
     {
       "file": "graphics/feature-graphic-1024x500.png",
@@ -24,74 +23,69 @@
       "channels": 3,
       "alpha": false,
       "bytes": 835698,
-      "nonBlank": true,
-      "sha256": "96b23107f2766ff31b28b6c383d43fee9ad92347b87acf2bf7c2a58e68288756"
+      "nonBlank": true
     },
     {
-      "file": "screenshots-draft/01-room-by-room-1080x1920.png",
+      "file": "screenshots-final/01-room-by-room-1080x1920.png",
       "width": 1080,
       "height": 1920,
       "channels": 3,
       "alpha": false,
-      "bytes": 197816,
-      "nonBlank": true,
-      "sha256": "04bfc1d129fd2003d7e01537e34e118cbdbdf97b46b3cd7e242d2c37c1d6249c"
+      "bytes": 224725,
+      "nonBlank": true
     },
     {
-      "file": "screenshots-draft/02-inspection-type-1080x1920.png",
+      "file": "screenshots-final/02-inspection-type-1080x1920.png",
       "width": 1080,
       "height": 1920,
       "channels": 3,
       "alpha": false,
-      "bytes": 167610,
-      "nonBlank": true,
-      "sha256": "69d53427339f2f06f1dadf090177d01ae1a712f629571311cc6216acd96697d5"
+      "bytes": 167323,
+      "nonBlank": true
     },
     {
-      "file": "screenshots-draft/03-photos-notes-1080x1920.png",
+      "file": "screenshots-final/03-photos-notes-1080x1920.png",
       "width": 1080,
       "height": 1920,
       "channels": 3,
       "alpha": false,
-      "bytes": 441036,
-      "nonBlank": true,
-      "sha256": "35eadb36b4257332d86283901f8394c8a8cdbf0853895d53af2e004fee4a441b"
+      "bytes": 305460,
+      "nonBlank": true
     },
     {
-      "file": "screenshots-draft/04-issues-1080x1920.png",
+      "file": "screenshots-final/04-issues-1080x1920.png",
       "width": 1080,
       "height": 1920,
       "channels": 3,
       "alpha": false,
-      "bytes": 195566,
-      "nonBlank": true,
-      "sha256": "fe794a13e30e231b6372e80da2527c80b63e0a34f2d395d6dc2936e4a3142c9f"
+      "bytes": 128610,
+      "nonBlank": true
     },
     {
-      "file": "screenshots-draft/05-signatures-1080x1920.png",
+      "file": "screenshots-final/05-signatures-1080x1920.png",
       "width": 1080,
       "height": 1920,
       "channels": 3,
       "alpha": false,
-      "bytes": 157367,
-      "nonBlank": true,
-      "sha256": "f0ace11cd269264d386327d53e1cd770144fe16f44943c4b28da867435b75fde"
+      "bytes": 167667,
+      "nonBlank": true
     },
     {
-      "file": "screenshots-draft/06-pdf-report-1080x1920.png",
+      "file": "screenshots-final/06-pdf-report-1080x1920.png",
       "width": 1080,
       "height": 1920,
       "channels": 3,
       "alpha": false,
-      "bytes": 676328,
-      "nonBlank": true,
-      "sha256": "4e84224caa241ca3623f4158978b4d53f13334b0bf405cbe0306e3ffda29e5ea"
+      "bytes": 797282,
+      "nonBlank": true
     }
   ],
   "remaining": [
-    "重要：AppModel.empty() 每次启动创建空模型；未实现跨重启记录保存。上架前补持久化并验证重启及升级。",
-    "没有入住与退租自动对照实现，不宣传自动损坏对比。",
-    "当前代码中的 PDF 包含照片、说明和签名；仍需在 Android 验证拍照、签名、导出和分享。"
+    "参与者确认使用输入的姓名和时间，没有手写签名轨迹。",
+    "没有入住与退租自动对比功能。",
+    "提交前发布 Android 英文隐私页，并核对客服邮箱和最终签名包。",
+    "在另一台电脑配置本地上传密钥，构建并验证 release AAB。"
   ],
-  "finalExportGuard": "Verified refusal when Android capture provenance is absent."
+  "visualReview": "passed; details in quality-review.json",
+  "sourceAndAndroidBuildReview": "source-audit.json"
 }

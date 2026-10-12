@@ -1,8 +1,8 @@
 {
   "locale": "en-US",
   "title": "Rental Report: Inspections",
-  "shortDescription": "Document rental condition with room photos, notes, signatures and PDF reports.",
-  "fullDescription": "Rental Report helps landlords, tenants and property hosts document a rental walkthrough in a clear room-by-room report.\n\nSTART THE RIGHT INSPECTION\nChoose move-in, move-out or routine inspection and add the property name and address.\n\nRECORD EACH ROOM\nReview the room checklist, add notes and attach photos from the camera or photo picker. Mark items as good, needing cleaning, worn, damaged or missing.\n\nTRACK THE DETAILS\nAdd issue notes and severity while you walk through the property, then review the inspection summary before exporting.\n\nCAPTURE SIGNATURES\nAdd participant names and signatures on the device to complete the walkthrough record.\n\nEXPORT A PDF\nGenerate a report with property details, room conditions, notes, photos and signatures. Save or share the exported file using the system share sheet.\n\nThe core inspection workflow does not require an account. No advertising or analytics SDK is included in the current source.\n\nRental Report is a documentation tool. It does not provide legal advice, guarantee a deposit outcome or replace a locally required inspection form. Use the records as part of your own documentation process.",
+  "shortDescription": "Rental inspections with room photos, notes, typed sign-offs and PDF reports.",
+  "fullDescription": "Rental Report helps landlords, tenants and property hosts document a rental walkthrough in a clear room-by-room report.\n\nSTART THE RIGHT INSPECTION\nChoose move-in, move-out or routine inspection and add the property name and address.\n\nRECORD EACH ROOM\nReview the room checklist, add notes and attach photos from the camera or photo picker. Mark items as good, needing cleaning, worn, damaged or missing.\n\nTRACK THE DETAILS\nAdd issue notes and severity while you walk through the property. Inspection records and attached photos are saved locally so you can return to your work after restarting the app.\n\nCOMPLETE THE HANDOFF\nRecord participant names and confirmation dates as typed sign-offs. Review the inspection summary before exporting.\n\nEXPORT A PDF\nGenerate a report with property details, room conditions, notes, room photos and typed sign-offs. Share the exported file using the system share sheet. Choose whether to include untouched rooms in the report.\n\nCore inspection features work offline without an account. The app includes no ads or subscriptions.\n\nRental Report is a documentation tool. It does not provide legal advice, guarantee a deposit outcome or replace a locally required inspection form. Use the records as part of your own documentation process.",
   "category": "Business",
   "appType": "App",
   "supportEmail": "1535883467@qq.com",
@@ -13,8 +13,12 @@
   "suggestedInitialPaidPriceUSD": "9.99",
   "pricingStatus": "Suggestion only; not applied in Play Console.",
   "codeReviewIssues": [
-    "重要：AppModel.empty() 每次启动创建空模型；未实现跨重启记录保存。上架前补持久化并验证重启及升级。",
-    "没有入住与退租自动对照实现，不宣传自动损坏对比。",
-    "当前代码中的 PDF 包含照片、说明和签名；仍需在 Android 验证拍照、签名、导出和分享。"
-  ]
+    "参与者确认使用输入的姓名和时间，没有手写签名轨迹。",
+    "没有入住与退租自动对比功能。",
+    "提交前发布 Android 英文隐私页，并核对客服邮箱和最终签名包。",
+    "在另一台电脑配置本地上传密钥，构建并验证 release AAB。"
+  ],
+  "applicationId": "com.cc.rentalreport",
+  "androidLanguageBuildDefine": null,
+  "screenshotsStatus": "Real English Android captures; marketing PNGs in screenshots-final."
 }

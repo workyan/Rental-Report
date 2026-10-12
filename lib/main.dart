@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,13 +10,15 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 
+part 'local_records.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   final launchConfig = await AppLaunchConfig.fromPlatform();
   final model = launchConfig.screenshotMode
       ? AppModel.showcase()
-      : AppModel.empty();
+      : await AppModel.loadLocal();
   runApp(RentalReportApp(launchConfig: launchConfig, model: model));
 }
 
@@ -40,7 +43,7 @@ class RentalReportApp extends StatelessWidget {
           theme: ThemeData(
             useMaterial3: true,
             scaffoldBackgroundColor: AppColors.background,
-            fontFamily: '.SF Pro Text',
+            fontFamily: Platform.isIOS ? '.SF Pro Text' : null,
             colorScheme: const ColorScheme.light(
               primary: AppColors.primary,
               onPrimary: Colors.white,
@@ -203,21 +206,22 @@ class _AppShellState extends State<AppShell> {
     }
 
     final body = switch (_tabIndex) {
-      0 => _showHistory
-          ? HistoryScreen(
-              model: widget.model,
-              onBack: () => setState(() => _showHistory = false),
-            )
-          : HomeScreen(
-              model: widget.model,
-              onOpenHistory: () => setState(() => _showHistory = true),
-              onNewInspection: _startInspectionFlow,
-            ),
+      0 =>
+        _showHistory
+            ? HistoryScreen(
+                model: widget.model,
+                onBack: () => setState(() => _showHistory = false),
+              )
+            : HomeScreen(
+                model: widget.model,
+                onOpenHistory: () => setState(() => _showHistory = true),
+                onNewInspection: _startInspectionFlow,
+              ),
       1 => PropertiesScreen(
-          model: widget.model,
-          onCreateProperty: _openCreatePropertySheet,
-          onStartInspection: _startInspectionFlow,
-        ),
+        model: widget.model,
+        onCreateProperty: _openCreatePropertySheet,
+        onStartInspection: _startInspectionFlow,
+      ),
       _ => SettingsScreen(model: widget.model, showStandaloneHeader: false),
     };
 
@@ -273,38 +277,41 @@ class _AppShellState extends State<AppShell> {
 
     return switch (scene) {
       ScreenshotScene.home => HomeScreen(
-          model: widget.model,
-          onOpenHistory: () {},
-          onNewInspection: () {},
-        ),
+        model: widget.model,
+        onOpenHistory: () {},
+        onNewInspection: () {},
+      ),
       ScreenshotScene.inspectionType => const InspectionTypeScreen(),
       ScreenshotScene.roomList => RoomListScreen(
-          model: widget.model,
-          inspectionId: showcaseInspection.id,
-        ),
+        model: widget.model,
+        inspectionId: showcaseInspection.id,
+      ),
       ScreenshotScene.roomDetail => RoomDetailScreen(
-          model: widget.model,
-          inspectionId: showcaseInspection.id,
-          roomName: showcaseRoom.name,
-        ),
+        model: widget.model,
+        inspectionId: showcaseInspection.id,
+        roomName: showcaseRoom.name,
+      ),
       ScreenshotScene.addIssue => AddIssueScreen(
-          model: widget.model,
-          inspectionId: showcaseInspection.id,
-          roomName: showcaseRoom.name,
-        ),
+        model: widget.model,
+        inspectionId: showcaseInspection.id,
+        roomName: showcaseRoom.name,
+      ),
       ScreenshotScene.signatures => SignaturesScreen(
-          model: widget.model,
-          inspectionId: showcaseInspection.id,
-        ),
+        model: widget.model,
+        inspectionId: showcaseInspection.id,
+      ),
       ScreenshotScene.exportPreview => ExportPreviewScreen(
-          model: widget.model,
-          inspectionId: showcaseInspection.id,
-        ),
-      ScreenshotScene.history => HistoryScreen(model: widget.model, onBack: () {}),
+        model: widget.model,
+        inspectionId: showcaseInspection.id,
+      ),
+      ScreenshotScene.history => HistoryScreen(
+        model: widget.model,
+        onBack: () {},
+      ),
       ScreenshotScene.settings => SettingsScreen(
-          model: widget.model,
-          showStandaloneHeader: true,
-        ),
+        model: widget.model,
+        showStandaloneHeader: true,
+      ),
     };
   }
 
@@ -477,7 +484,10 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Inspection History', style: theme.textTheme.titleMedium),
+                      Text(
+                        'Inspection History',
+                        style: theme.textTheme.titleMedium,
+                      ),
                       const SizedBox(height: 2),
                       Text(
                         '${model.inspections.length} saved inspections',
@@ -584,8 +594,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final inspection = history[index];
-                      final property =
-                          widget.model.propertyById(inspection.propertyId)!;
+                      final property = widget.model.propertyById(
+                        inspection.propertyId,
+                      )!;
                       return InspectionSummaryCard(
                         inspection: inspection,
                         property: property,
@@ -674,9 +685,7 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                               const SizedBox(width: 12),
                               Text(
                                 'Add New Property',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
+                                style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(color: AppColors.primary),
                               ),
                             ],
@@ -709,20 +718,21 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                                 children: [
                                   Text(
                                     property.name,
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleMedium,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     property.address,
-                                    style: Theme.of(context).textTheme.bodySmall,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
                                     '$count inspections',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
+                                    style: Theme.of(context).textTheme.bodySmall
                                         ?.copyWith(color: AppColors.primary),
                                   ),
                                 ],
@@ -839,7 +849,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: const [
                 SettingsRow(title: 'Privacy Policy'),
                 Divider(height: 1, color: AppColors.border),
-                SettingsRow(title: 'Support', trailing: 'support@rentalreport.app'),
+                SettingsRow(
+                  title: 'Support',
+                  trailing: 'support@rentalreport.app',
+                ),
                 Divider(height: 1, color: AppColors.border),
                 SettingsRow(title: 'App Version', trailing: '1.0.0'),
               ],
@@ -874,9 +887,9 @@ class InspectionTypeScreen extends StatelessWidget {
               const SizedBox(height: 10),
               Text(
                 'Start with the right report format, then select the property and walk each room.',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 30),
@@ -1050,16 +1063,16 @@ class _PropertyPickerScreenState extends State<PropertyPickerScreen> {
                                     children: [
                                       Text(
                                         property.name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleMedium,
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
                                         property.address,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodySmall,
                                       ),
                                     ],
                                   ),
@@ -1217,7 +1230,9 @@ class RoomListScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   room.name,
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
@@ -1230,9 +1245,7 @@ class RoomListScreen extends StatelessWidget {
                           const SizedBox(width: 12),
                           Text(
                             room.condition.shortLabel,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
+                            style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(color: room.condition.color),
                           ),
                         ],
@@ -1251,10 +1264,8 @@ class RoomListScreen extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).push(
               CupertinoPageRoute<void>(
-                builder: (context) => SignaturesScreen(
-                  model: model,
-                  inspectionId: inspection.id,
-                ),
+                builder: (context) =>
+                    SignaturesScreen(model: model, inspectionId: inspection.id),
               ),
             );
           },
@@ -1290,7 +1301,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
     _noteController = TextEditingController(text: room.note);
   }
 
-  InspectionRecord get inspection => widget.model.inspectionById(widget.inspectionId)!;
+  InspectionRecord get inspection =>
+      widget.model.inspectionById(widget.inspectionId)!;
 
   RoomRecord get room =>
       inspection.rooms.firstWhere((element) => element.name == widget.roomName);
@@ -1358,13 +1370,18 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 18),
-                Text('Condition', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  'Condition',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 12),
                 Wrap(
                   spacing: 10,
                   runSpacing: 10,
                   children: RoomCondition.values
-                      .where((condition) => condition != RoomCondition.notStarted)
+                      .where(
+                        (condition) => condition != RoomCondition.notStarted,
+                      )
                       .map(
                         (condition) => ConditionChip(
                           label: condition.chipLabel,
@@ -1389,7 +1406,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                 NoteField(
                   controller: _noteController,
                   maxLength: 250,
-                  hint: 'Add room notes, wear details, and anything worth highlighting in the report.',
+                  hint:
+                      'Add room notes, wear details, and anything worth highlighting in the report.',
                   onChanged: (value) {
                     widget.model.updateRoomNote(
                       inspectionId: inspection.id,
@@ -1403,7 +1421,10 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Photos', style: Theme.of(context).textTheme.titleMedium),
+                    Text(
+                      'Photos',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                     Text(
                       '${room.photoAssets.length} attached',
                       style: Theme.of(context).textTheme.bodySmall,
@@ -1415,9 +1436,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                   spacing: 10,
                   runSpacing: 10,
                   children: [
-                    PhotoAddTile(
-                      onTap: _showPhotoSourceSheet,
-                    ),
+                    PhotoAddTile(onTap: _showPhotoSourceSheet),
                     ...room.photoAssets.map(
                       (asset) => PhotoThumb(
                         image: asset,
@@ -1444,10 +1463,9 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                     if (room.issues.isNotEmpty)
                       Text(
                         'Tap to review',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: AppColors.primary),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppColors.primary,
+                        ),
                       ),
                   ],
                 ),
@@ -1492,19 +1510,20 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                             const SizedBox(width: 10),
                             Expanded(
                               child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     issue.item,
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleMedium,
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     '${issue.condition.shortLabel} · ${issue.severity.label}',
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
                                   ),
                                 ],
                               ),
@@ -1564,7 +1583,9 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       context: context,
       builder: (context) => CupertinoActionSheet(
         title: const Text('Add Photo'),
-        message: const Text('Choose a real photo from the camera or photo library.'),
+        message: const Text(
+          'Choose a real photo from the camera or photo library.',
+        ),
         actions: [
           CupertinoActionSheetAction(
             onPressed: () async {
@@ -1600,10 +1621,17 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         return;
       }
 
+      final directory = await getApplicationSupportDirectory();
+      final photos = Directory('${directory.path}/inspection-photos');
+      await photos.create(recursive: true);
+      final photo = await File(pickedFile.path).copy(
+        '${photos.path}/photo-${DateTime.now().microsecondsSinceEpoch}.jpg',
+      );
+      if (!mounted) return;
       widget.model.addRoomPhoto(
         inspectionId: inspection.id,
         roomName: room.name,
-        path: pickedFile.path,
+        path: photo.path,
       );
       setState(() {});
     } on MissingPluginException {
@@ -1612,7 +1640,9 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Photo picker is not loaded yet. Fully restart the app.'),
+          content: Text(
+            'Photo picker is not loaded yet. Fully restart the app.',
+          ),
         ),
       );
     } on PlatformException catch (error) {
@@ -1620,15 +1650,18 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         return;
       }
       final message = switch (error.code) {
-        'camera_access_denied' => 'Camera access was denied. Enable it in iPhone Settings.',
-        'photo_access_denied' => 'Photo Library access was denied. Enable it in iPhone Settings.',
-        'camera_unavailable' => 'Camera is unavailable on this device. Use Photo Library instead.',
+        'camera_access_denied' =>
+          'Camera access was denied. Enable it in iPhone Settings.',
+        'photo_access_denied' =>
+          'Photo Library access was denied. Enable it in iPhone Settings.',
+        'camera_unavailable' =>
+          'Camera is unavailable on this device. Use Photo Library instead.',
         'invalid_image' => 'The selected image could not be loaded.',
         _ => 'Unable to add photo right now. ${error.message ?? ''}'.trim(),
       };
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } catch (error) {
       debugPrint('Photo pick failed: $error');
       if (!mounted) {
@@ -1710,7 +1743,9 @@ class _AddIssueScreenState extends State<AddIssueScreen> {
                   spacing: 10,
                   runSpacing: 10,
                   children: RoomCondition.values
-                      .where((condition) => condition != RoomCondition.notStarted)
+                      .where(
+                        (condition) => condition != RoomCondition.notStarted,
+                      )
                       .map(
                         (condition) => ConditionChip(
                           label: condition.chipLabel,
@@ -1745,7 +1780,8 @@ class _AddIssueScreenState extends State<AddIssueScreen> {
                 NoteField(
                   controller: _noteController,
                   maxLength: 250,
-                  hint: 'Describe what was found and what follow-up may be needed.',
+                  hint:
+                      'Describe what was found and what follow-up may be needed.',
                 ),
               ],
             ),
@@ -1794,7 +1830,8 @@ class _SignaturesScreenState extends State<SignaturesScreen> {
   late final TextEditingController _landlordController;
   late final TextEditingController _tenantController;
 
-  InspectionRecord get inspection => widget.model.inspectionById(widget.inspectionId)!;
+  InspectionRecord get inspection =>
+      widget.model.inspectionById(widget.inspectionId)!;
 
   @override
   void initState() {
@@ -2015,7 +2052,9 @@ class ExportPreviewScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         ...inspection.rooms
-                            .where((room) => room.condition != RoomCondition.good)
+                            .where(
+                              (room) => room.condition != RoomCondition.good,
+                            )
                             .map(
                               (room) => Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
@@ -2030,9 +2069,9 @@ class ExportPreviewScreen extends StatelessWidget {
                                     Expanded(
                                       child: Text(
                                         '${room.name}: ${room.subtitle}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
                                       ),
                                     ),
                                   ],
@@ -2049,7 +2088,10 @@ class ExportPreviewScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomActionBar(
-        child: PrimaryButton(label: 'Export PDF', onPressed: () => _export(context)),
+        child: PrimaryButton(
+          label: 'Export PDF',
+          onPressed: () => _export(context),
+        ),
       ),
     );
   }
@@ -2076,7 +2118,11 @@ class ExportPreviewScreen extends StatelessWidget {
     );
 
     try {
-      final file = await _buildPdfFile(inspection, property);
+      final file = await _buildPdfFile(
+        inspection,
+        property,
+        includeEmptyItems: model.includeEmptyItems,
+      );
       model.markExported(inspectionId);
 
       if (!context.mounted) {
@@ -2089,8 +2135,9 @@ class ExportPreviewScreen extends StatelessWidget {
         [XFile(file.path)],
         subject: '${property.name} ${inspection.type.label} Report',
         text: 'Rental inspection report for ${property.name}.',
-        sharePositionOrigin:
-            box == null ? null : box.localToGlobal(Offset.zero) & box.size,
+        sharePositionOrigin: box == null
+            ? null
+            : box.localToGlobal(Offset.zero) & box.size,
       );
     } catch (error) {
       if (context.mounted) {
@@ -2099,9 +2146,7 @@ class ExportPreviewScreen extends StatelessWidget {
           context: context,
           builder: (dialogContext) => CupertinoAlertDialog(
             title: const Text('Export Failed'),
-            content: Text(
-              'The PDF could not be created right now.\n$error',
-            ),
+            content: Text('The PDF could not be created right now.\n$error'),
             actions: [
               CupertinoDialogAction(
                 onPressed: () => Navigator.of(dialogContext).pop(),
@@ -2175,10 +2220,7 @@ class _AddPropertySheetState extends State<AddPropertySheet> {
             const SizedBox(height: 16),
             Text('Property Name', style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 8),
-            DetailField(
-              controller: _nameController,
-              hint: 'West Harbor Loft',
-            ),
+            DetailField(controller: _nameController, hint: 'West Harbor Loft'),
             const SizedBox(height: 14),
             Text('Address', style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 8),
@@ -2242,10 +2284,9 @@ class HeaderBar extends StatelessWidget {
               if (subtitle != null)
                 Text(
                   subtitle!,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: AppColors.primary),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: AppColors.primary),
                 ),
             ],
           ),
@@ -2549,11 +2590,11 @@ class ConditionChip extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontSize: 10,
-                    color: selected ? accent : AppColors.textSecondary,
-                    fontWeight: FontWeight.w700,
-                    height: 1.12,
-                  ),
+                fontSize: 10,
+                color: selected ? accent : AppColors.textSecondary,
+                fontWeight: FontWeight.w700,
+                height: 1.12,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -2601,9 +2642,9 @@ class SeverityChip extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: selected ? accent : AppColors.textSecondary,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: selected ? accent : AppColors.textSecondary,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -2683,12 +2724,7 @@ class PhotoThumb extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(16),
-          child: AppImage(
-            image,
-            width: size,
-            height: size,
-            fit: BoxFit.cover,
-          ),
+          child: AppImage(image, width: size, height: size, fit: BoxFit.cover),
         ),
         Positioned(
           top: 6,
@@ -2716,13 +2752,7 @@ class PhotoThumb extends StatelessWidget {
 }
 
 class AppImage extends StatelessWidget {
-  const AppImage(
-    this.path, {
-    super.key,
-    this.width,
-    this.height,
-    this.fit,
-  });
+  const AppImage(this.path, {super.key, this.width, this.height, this.fit});
 
   final String path;
   final double? width;
@@ -2777,9 +2807,9 @@ class PhotoAddTile extends StatelessWidget {
             Text(
               'Add Photo',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: AppColors.primary,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -2820,10 +2850,7 @@ class SignaturePanel extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DetailField(
-                controller: controller,
-                hint: 'Full name',
-              ),
+              DetailField(controller: controller, hint: 'Full name'),
               const SizedBox(height: 12),
               Container(
                 height: 72,
@@ -2840,8 +2867,9 @@ class SignaturePanel extends StatelessWidget {
                         : 'Tap Sign to confirm',
                     style: TextStyle(
                       fontSize: signature == null ? 15 : 30,
-                      fontStyle:
-                          signature == null ? FontStyle.normal : FontStyle.italic,
+                      fontStyle: signature == null
+                          ? FontStyle.normal
+                          : FontStyle.italic,
                       color: signature == null
                           ? AppColors.textSecondary
                           : AppColors.textPrimary,
@@ -2888,11 +2916,7 @@ class SignaturePanel extends StatelessWidget {
 }
 
 class DetailField extends StatelessWidget {
-  const DetailField({
-    super.key,
-    required this.controller,
-    required this.hint,
-  });
+  const DetailField({super.key, required this.controller, required this.hint});
 
   final TextEditingController controller;
   final String hint;
@@ -2969,7 +2993,8 @@ class OverviewTable extends StatelessWidget {
           Expanded(
             child: _MetricColumn(
               label: 'Rooms Complete',
-              value: '${inspection.completedRoomCount}/${inspection.rooms.length}',
+              value:
+                  '${inspection.completedRoomCount}/${inspection.rooms.length}',
               labelStyle: labelStyle,
               valueStyle: valueStyle,
             ),
@@ -3140,7 +3165,10 @@ class InspectionSummaryCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(property.name, style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  property.name,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 4),
                 Text(
                   '${inspection.type.label} · ${inspection.formattedDate}',
@@ -3149,15 +3177,17 @@ class InspectionSummaryCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   '${inspection.completedRoomCount}/${inspection.rooms.length} rooms complete · ${inspection.issueCount} issues',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: AppColors.primary),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: AppColors.primary),
                 ),
               ],
             ),
           ),
-          StatusPill(label: inspection.status.label, color: inspection.status.color),
+          StatusPill(
+            label: inspection.status.label,
+            color: inspection.status.color,
+          ),
         ],
       ),
     );
@@ -3181,9 +3211,9 @@ class StatusPill extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w700,
-            ),
+          color: color,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
@@ -3279,9 +3309,9 @@ class LabelText extends StatelessWidget {
     return Text(
       label,
       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            letterSpacing: 0.5,
-            color: AppColors.textTertiary,
-          ),
+        letterSpacing: 0.5,
+        color: AppColors.textTertiary,
+      ),
     );
   }
 }
@@ -3302,20 +3332,20 @@ class AppColors {
 
 class AppShadows {
   static List<BoxShadow> get card => [
-        BoxShadow(
-          color: const Color(0xFF0B1320).withValues(alpha: 0.05),
-          blurRadius: 28,
-          offset: const Offset(0, 12),
-        ),
-      ];
+    BoxShadow(
+      color: const Color(0xFF0B1320).withValues(alpha: 0.05),
+      blurRadius: 28,
+      offset: const Offset(0, 12),
+    ),
+  ];
 
   static List<BoxShadow> get soft => [
-        BoxShadow(
-          color: const Color(0xFF0B1320).withValues(alpha: 0.025),
-          blurRadius: 16,
-          offset: const Offset(0, 6),
-        ),
-      ];
+    BoxShadow(
+      color: const Color(0xFF0B1320).withValues(alpha: 0.025),
+      blurRadius: 16,
+      offset: const Offset(0, 6),
+    ),
+  ];
 }
 
 enum InspectionType {
@@ -3324,37 +3354,37 @@ enum InspectionType {
   routine;
 
   String get label => switch (this) {
-        InspectionType.moveIn => 'Move-In',
-        InspectionType.moveOut => 'Move-Out',
-        InspectionType.routine => 'Routine',
-      };
+    InspectionType.moveIn => 'Move-In',
+    InspectionType.moveOut => 'Move-Out',
+    InspectionType.routine => 'Routine',
+  };
 
   String get subtitle => switch (this) {
-        InspectionType.moveIn =>
-          'Capture the starting condition before keys are handed over.',
-        InspectionType.moveOut =>
-          'Document the final condition before turnover or deposit review.',
-        InspectionType.routine =>
-          'Run a periodic condition check and keep a clean inspection trail.',
-      };
+    InspectionType.moveIn =>
+      'Capture the starting condition before keys are handed over.',
+    InspectionType.moveOut =>
+      'Document the final condition before turnover or deposit review.',
+    InspectionType.routine =>
+      'Run a periodic condition check and keep a clean inspection trail.',
+  };
 
   IconData get icon => switch (this) {
-        InspectionType.moveIn => CupertinoIcons.arrow_down_doc_fill,
-        InspectionType.moveOut => CupertinoIcons.arrow_up_doc_fill,
-        InspectionType.routine => CupertinoIcons.calendar,
-      };
+    InspectionType.moveIn => CupertinoIcons.arrow_down_doc_fill,
+    InspectionType.moveOut => CupertinoIcons.arrow_up_doc_fill,
+    InspectionType.routine => CupertinoIcons.calendar,
+  };
 
   Color get color => switch (this) {
-        InspectionType.moveIn => AppColors.success,
-        InspectionType.moveOut => AppColors.danger,
-        InspectionType.routine => AppColors.primary,
-      };
+    InspectionType.moveIn => AppColors.success,
+    InspectionType.moveOut => AppColors.danger,
+    InspectionType.routine => AppColors.primary,
+  };
 
   Color get tint => switch (this) {
-        InspectionType.moveIn => const Color(0xFFEAF8F0),
-        InspectionType.moveOut => const Color(0xFFFFF0EE),
-        InspectionType.routine => const Color(0xFFEEF5FF),
-      };
+    InspectionType.moveIn => const Color(0xFFEAF8F0),
+    InspectionType.moveOut => const Color(0xFFFFF0EE),
+    InspectionType.routine => const Color(0xFFEEF5FF),
+  };
 }
 
 enum InspectionStatus {
@@ -3363,16 +3393,16 @@ enum InspectionStatus {
   exported;
 
   String get label => switch (this) {
-        InspectionStatus.draft => 'Draft',
-        InspectionStatus.reviewReady => 'Ready',
-        InspectionStatus.exported => 'Exported',
-      };
+    InspectionStatus.draft => 'Draft',
+    InspectionStatus.reviewReady => 'Ready',
+    InspectionStatus.exported => 'Exported',
+  };
 
   Color get color => switch (this) {
-        InspectionStatus.draft => AppColors.warning,
-        InspectionStatus.reviewReady => AppColors.primary,
-        InspectionStatus.exported => AppColors.success,
-      };
+    InspectionStatus.draft => AppColors.warning,
+    InspectionStatus.reviewReady => AppColors.primary,
+    InspectionStatus.exported => AppColors.success,
+  };
 }
 
 enum RoomCondition {
@@ -3384,40 +3414,40 @@ enum RoomCondition {
   missing;
 
   String get shortLabel => switch (this) {
-        RoomCondition.notStarted => 'Not started',
-        RoomCondition.good => 'Good',
-        RoomCondition.needsCleaning => 'Cleaning',
-        RoomCondition.worn => 'Worn',
-        RoomCondition.damaged => 'Damaged',
-        RoomCondition.missing => 'Missing',
-      };
+    RoomCondition.notStarted => 'Not started',
+    RoomCondition.good => 'Good',
+    RoomCondition.needsCleaning => 'Cleaning',
+    RoomCondition.worn => 'Worn',
+    RoomCondition.damaged => 'Damaged',
+    RoomCondition.missing => 'Missing',
+  };
 
   String get chipLabel => switch (this) {
-        RoomCondition.notStarted => 'Not\nStarted',
-        RoomCondition.good => 'Good',
-        RoomCondition.needsCleaning => 'Needs\nCleaning',
-        RoomCondition.worn => 'Worn',
-        RoomCondition.damaged => 'Damaged',
-        RoomCondition.missing => 'Missing',
-      };
+    RoomCondition.notStarted => 'Not\nStarted',
+    RoomCondition.good => 'Good',
+    RoomCondition.needsCleaning => 'Needs\nCleaning',
+    RoomCondition.worn => 'Worn',
+    RoomCondition.damaged => 'Damaged',
+    RoomCondition.missing => 'Missing',
+  };
 
   IconData get icon => switch (this) {
-        RoomCondition.notStarted => CupertinoIcons.circle_fill,
-        RoomCondition.good => CupertinoIcons.check_mark,
-        RoomCondition.needsCleaning => CupertinoIcons.sparkles,
-        RoomCondition.worn => CupertinoIcons.circle_lefthalf_fill,
-        RoomCondition.damaged => CupertinoIcons.exclamationmark,
-        RoomCondition.missing => CupertinoIcons.xmark,
-      };
+    RoomCondition.notStarted => CupertinoIcons.circle_fill,
+    RoomCondition.good => CupertinoIcons.check_mark,
+    RoomCondition.needsCleaning => CupertinoIcons.sparkles,
+    RoomCondition.worn => CupertinoIcons.circle_lefthalf_fill,
+    RoomCondition.damaged => CupertinoIcons.exclamationmark,
+    RoomCondition.missing => CupertinoIcons.xmark,
+  };
 
   Color get color => switch (this) {
-        RoomCondition.notStarted => AppColors.inactive,
-        RoomCondition.good => AppColors.success,
-        RoomCondition.needsCleaning => AppColors.warning,
-        RoomCondition.worn => AppColors.orange,
-        RoomCondition.damaged => AppColors.danger,
-        RoomCondition.missing => AppColors.textSecondary,
-      };
+    RoomCondition.notStarted => AppColors.inactive,
+    RoomCondition.good => AppColors.success,
+    RoomCondition.needsCleaning => AppColors.warning,
+    RoomCondition.worn => AppColors.orange,
+    RoomCondition.damaged => AppColors.danger,
+    RoomCondition.missing => AppColors.textSecondary,
+  };
 }
 
 enum IssueSeverity {
@@ -3426,16 +3456,16 @@ enum IssueSeverity {
   high;
 
   String get label => switch (this) {
-        IssueSeverity.low => 'Low',
-        IssueSeverity.medium => 'Medium',
-        IssueSeverity.high => 'High',
-      };
+    IssueSeverity.low => 'Low',
+    IssueSeverity.medium => 'Medium',
+    IssueSeverity.high => 'High',
+  };
 
   Color get color => switch (this) {
-        IssueSeverity.low => AppColors.success,
-        IssueSeverity.medium => AppColors.warning,
-        IssueSeverity.high => AppColors.danger,
-      };
+    IssueSeverity.low => AppColors.success,
+    IssueSeverity.medium => AppColors.warning,
+    IssueSeverity.high => AppColors.danger,
+  };
 }
 
 enum SignatureRole { landlord, tenant }
@@ -3560,18 +3590,19 @@ class InspectionRecord {
       rooms: rooms ?? this.rooms,
       status: status ?? this.status,
       updatedAt: updatedAt ?? this.updatedAt,
-      landlordSignature:
-          clearLandlordSignature ? null : landlordSignature ?? this.landlordSignature,
-      tenantSignature:
-          clearTenantSignature ? null : tenantSignature ?? this.tenantSignature,
+      landlordSignature: clearLandlordSignature
+          ? null
+          : landlordSignature ?? this.landlordSignature,
+      tenantSignature: clearTenantSignature
+          ? null
+          : tenantSignature ?? this.tenantSignature,
     );
   }
 
   int get completedRoomCount =>
       rooms.where((room) => room.condition != RoomCondition.notStarted).length;
 
-  int get issueCount =>
-      rooms.fold(0, (sum, room) => sum + room.issues.length);
+  int get issueCount => rooms.fold(0, (sum, room) => sum + room.issues.length);
 
   double get progress => rooms.isEmpty ? 0 : completedRoomCount / rooms.length;
 
@@ -3608,8 +3639,8 @@ class AppModel extends ChangeNotifier {
     required List<PropertyRecord> properties,
     required List<InspectionRecord> inspections,
     required this.includeEmptyItems,
-  })  : _properties = properties,
-        _inspections = inspections;
+  }) : _properties = properties,
+       _inspections = inspections;
 
   factory AppModel.empty() {
     return AppModel._(
@@ -3617,6 +3648,39 @@ class AppModel extends ChangeNotifier {
       inspections: const [],
       includeEmptyItems: true,
     );
+  }
+
+  /// Loads records from an app-private file. Screenshot and unit-test models
+  /// remain in memory and never write demo data to the user's record store.
+  static Future<AppModel> loadLocal({Directory? directory}) async {
+    final root = directory ?? await getApplicationSupportDirectory();
+    await root.create(recursive: true);
+    final file = File('${root.path}/rental-records-v1.json');
+    final model = file.existsSync()
+        ? _decodeRecords(
+            jsonDecode(await file.readAsString()) as Map<String, dynamic>,
+          )
+        : AppModel.empty();
+    model._storageFile = file;
+    return model;
+  }
+
+  File? _storageFile;
+
+  @override
+  void notifyListeners() {
+    final file = _storageFile;
+    if (file != null) {
+      // Replace atomically: an interrupted write cannot truncate the last
+      // complete record file. Image bytes live in separate files.
+      final temporary = File('${file.path}.tmp');
+      temporary.writeAsStringSync(
+        jsonEncode(_encodeRecords(this)),
+        flush: true,
+      );
+      temporary.renameSync(file.path);
+    }
+    super.notifyListeners();
   }
 
   factory AppModel.showcase() {
@@ -3699,12 +3763,14 @@ class AppModel extends ChangeNotifier {
   String get datePreview => formatDate(DateTime(2026, 7, 1));
 
   AppSummary get summary => AppSummary(
-        propertyCount: _properties.length,
-        draftCount:
-            _inspections.where((inspection) => inspection.status != InspectionStatus.exported).length,
-        exportedCount:
-            _inspections.where((inspection) => inspection.status == InspectionStatus.exported).length,
-      );
+    propertyCount: _properties.length,
+    draftCount: _inspections
+        .where((inspection) => inspection.status != InspectionStatus.exported)
+        .length,
+    exportedCount: _inspections
+        .where((inspection) => inspection.status == InspectionStatus.exported)
+        .length,
+  );
 
   PropertyRecord? propertyById(String id) {
     for (final property in _properties) {
@@ -3759,10 +3825,7 @@ class AppModel extends ChangeNotifier {
         .length;
   }
 
-  PropertyRecord addProperty({
-    required String name,
-    required String address,
-  }) {
+  PropertyRecord addProperty({required String name, required String address}) {
     final property = PropertyRecord(
       id: _newId('property'),
       name: name,
@@ -3821,8 +3884,7 @@ class AppModel extends ChangeNotifier {
     _updateInspection(inspectionId, (inspection) {
       final rooms = inspection.rooms
           .map(
-            (room) =>
-                room.name == roomName ? room.copyWith(note: note) : room,
+            (room) => room.name == roomName ? room.copyWith(note: note) : room,
           )
           .toList();
       return inspection.copyWith(
@@ -3914,7 +3976,9 @@ class AppModel extends ChangeNotifier {
         if (room.name != roomName) {
           return room;
         }
-        final issues = room.issues.where((issue) => issue.id != issueId).toList();
+        final issues = room.issues
+            .where((issue) => issue.id != issueId)
+            .toList();
         return room.copyWith(issues: issues);
       }).toList();
       return inspection.copyWith(rooms: rooms, updatedAt: DateTime.now());
@@ -3933,13 +3997,13 @@ class AppModel extends ChangeNotifier {
     _updateInspection(inspectionId, (inspection) {
       final updated = switch (role) {
         SignatureRole.landlord => inspection.copyWith(
-            landlordSignature: signature,
-            updatedAt: DateTime.now(),
-          ),
+          landlordSignature: signature,
+          updatedAt: DateTime.now(),
+        ),
         SignatureRole.tenant => inspection.copyWith(
-            tenantSignature: signature,
-            updatedAt: DateTime.now(),
-          ),
+          tenantSignature: signature,
+          updatedAt: DateTime.now(),
+        ),
       };
       return updated.copyWith(status: _deriveStatus(updated));
     });
@@ -3980,8 +4044,7 @@ class AppModel extends ChangeNotifier {
         return inspection;
       }
       return update(inspection);
-    }).toList()
-      ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    }).toList()..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     notifyListeners();
   }
 
@@ -4020,15 +4083,76 @@ String formatDate(DateTime date) {
 
 Future<File> _buildPdfFile(
   InspectionRecord inspection,
-  PropertyRecord property,
-) async {
+  PropertyRecord property, {
+  bool includeEmptyItems = true,
+}) async {
   final pdf = pw.Document();
   final heroImage = await _loadPdfImage(property.image);
+  final roomSections = <pw.Widget>[];
+  for (final room in inspection.rooms) {
+    if (!includeEmptyItems &&
+        room.condition == RoomCondition.notStarted &&
+        room.note.isEmpty &&
+        room.issues.isEmpty &&
+        room.photoAssets.isEmpty) {
+      continue;
+    }
+    roomSections.add(pw.Inseparable(child: _pdfRoomSection(room)));
+    // Keep each photo row separate so longer inspections can span pages.
+    for (var start = 0; start < room.photoAssets.length; start += 3) {
+      final images = <pw.MemoryImage>[];
+      for (final photo in room.photoAssets.skip(start).take(3)) {
+        images.add(await _loadPdfImage(photo));
+      }
+      roomSections.add(
+        pw.Container(
+          margin: const pw.EdgeInsets.only(bottom: 12),
+          child: pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                '${room.name} - Photos',
+                style: const pw.TextStyle(fontSize: 10),
+              ),
+              pw.SizedBox(height: 6),
+              pw.Row(
+                children: [
+                  for (final image in images)
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.only(right: 8),
+                      child: pw.Image(
+                        image,
+                        width: 160,
+                        height: 112,
+                        fit: pw.BoxFit.cover,
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
 
   pdf.addPage(
     pw.MultiPage(
       pageFormat: PdfPageFormat.a4,
       margin: const pw.EdgeInsets.all(28),
+      footer: (context) => pw.Padding(
+        padding: const pw.EdgeInsets.only(top: 12),
+        child: pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          children: [
+            pw.Text('Rental Report', style: const pw.TextStyle(fontSize: 9)),
+            pw.Text(
+              'Page ${context.pageNumber} of ${context.pagesCount}',
+              style: const pw.TextStyle(fontSize: 9),
+            ),
+          ],
+        ),
+      ),
       build: (context) => [
         pw.Container(
           padding: const pw.EdgeInsets.all(20),
@@ -4081,8 +4205,10 @@ Future<File> _buildPdfFile(
         pw.SizedBox(height: 18),
         pw.Row(
           children: [
-            _pdfMetricCard('Rooms Complete',
-                '${inspection.completedRoomCount}/${inspection.rooms.length}'),
+            _pdfMetricCard(
+              'Rooms Complete',
+              '${inspection.completedRoomCount}/${inspection.rooms.length}',
+            ),
             pw.SizedBox(width: 10),
             _pdfMetricCard('Issues', '${inspection.issueCount}'),
             pw.SizedBox(width: 10),
@@ -4095,7 +4221,7 @@ Future<File> _buildPdfFile(
           style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
         ),
         pw.SizedBox(height: 12),
-        ...inspection.rooms.map((room) => _pdfRoomSection(room)),
+        ...roomSections,
         pw.SizedBox(height: 18),
         pw.Text(
           'Signatures',
@@ -4157,10 +4283,7 @@ pw.Widget _pdfMetricCard(String label, String value) {
           pw.SizedBox(height: 6),
           pw.Text(
             value,
-            style: pw.TextStyle(
-              fontSize: 16,
-              fontWeight: pw.FontWeight.bold,
-            ),
+            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
           ),
         ],
       ),
@@ -4184,10 +4307,7 @@ pw.Widget _pdfRoomSection(RoomRecord room) {
           children: [
             pw.Text(
               room.name,
-              style: pw.TextStyle(
-                fontSize: 14,
-                fontWeight: pw.FontWeight.bold,
-              ),
+              style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
             ),
             pw.Text(
               room.condition.shortLabel,
@@ -4248,19 +4368,13 @@ pw.Widget _pdfSignatureRow(String role, String name, String date) {
             pw.SizedBox(height: 4),
             pw.Text(
               name,
-              style: pw.TextStyle(
-                fontSize: 13,
-                fontWeight: pw.FontWeight.bold,
-              ),
+              style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold),
             ),
           ],
         ),
         pw.Text(
           date,
-          style: pw.TextStyle(
-            fontSize: 11,
-            color: PdfColor.fromHex('#667085'),
-          ),
+          style: pw.TextStyle(fontSize: 11, color: PdfColor.fromHex('#667085')),
         ),
       ],
     ),

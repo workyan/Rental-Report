@@ -1,14 +1,65 @@
 {
-  "reviewedCommit": "e58e4fb43238421e7b67a011d376a1a19efea62b",
-  "scope": "Existing Flutter source, not an Android build verification.",
+  "reviewedAt": "2026-10-12T10:53:36.110640+00:00",
+  "baseCommitBeforeChanges": "dbb6982c5313ffb71a1e1558bfda6f43e7b06d3f",
+  "scope": "Current Flutter and Android source, debug APK, real simulator scenes, marketing assets. Signed release AAB and physical-device validation remain with the submitting developer.",
   "sourceFiles": {
-    "lib/main.dart": "b29852ed839e68836748a6dc293bbfec5397a699949aecf9f59dd11bb4429cfb"
+    "android/app/build.gradle.kts": "2f9e60b5b1a0a49bdcd4abda42d0d3effb9714e771ef10655c1ff12e3d2e65bd",
+    "android/app/src/debug/AndroidManifest.xml": "30b0832ed8b92dfbd6ae2abfa939ccf26333d37600056b1572bd4a397a18a74b",
+    "android/app/src/main/AndroidManifest.xml": "d849282ee4ac75ec550dc13eb8fab31e27ddf026311b63f2710fd513a6e91c5e",
+    "android/app/src/main/kotlin/com/cc/rentalreport/MainActivity.kt": "4a19f8075d39170f96a973c5c682902f677f7449bf456d8166f3eb1e38695eb5",
+    "android/app/src/main/res/drawable/launch_background.xml": "94433756fe10005ddd6fc55cc5c0b1e9f3c10b66a08ceac795ece6713d34e28a",
+    "android/app/src/main/res/drawable-v21/launch_background.xml": "7ca6d5cec2169c5a98661a119db23a6f3399c8fef2256ff04f3a642831282478",
+    "android/app/src/main/res/values/styles.xml": "937d7c82f539c72eb94fd3a3773f29b3d3fef1997213c92cb632298cedf4bda9",
+    "android/app/src/main/res/values-night/styles.xml": "8c5bad5152f217e837519f9c15211d19f39bd45f5f67faf6dd81cb4b299e518f",
+    "android/app/src/profile/AndroidManifest.xml": "30b0832ed8b92dfbd6ae2abfa939ccf26333d37600056b1572bd4a397a18a74b",
+    "android/build.gradle.kts": "6a26dba2cb8dfba1e74f540b0d17a89d96c1301d3c3bfda14348bed257fddcba",
+    "android/gradle/wrapper/gradle-wrapper.properties": "3221993eac1057198d652b7437105e2953ca4850d415eb0eb2b9625874fd059e",
+    "android/gradle.properties": "0f82b18017fba6bb5ce3aa4b2d1a00c9382fc8aae7b1d9326e44b18abd66d80b",
+    "android/settings.gradle.kts": "b76d554153a63772dddbe2ee91abdf582f5f871af40698b80a2ef7b70903d96f",
+    "lib/local_records.dart": "202d7e6e8650897fc6b2e0ef6f4b2372f33d0740488faac4e5a6dd78dae25a95",
+    "lib/main.dart": "a4ce17305751c90676e1b15f0559f5ee8783e7c38a1646aa2fef688dab463346",
+    "pubspec.lock": "ebae234eca35b794c4680e98bd063f017442df05bd4b01a059a70ac2d2e97de3",
+    "pubspec.yaml": "388614f2a84902402442b925b0afd6bd7e935e3a0fbb840825b363a61bdea485",
+    "test/local_records_test.dart": "525e439dbf2b309e7de013964138f439719df7e0d582c2e016e973483be8f692",
+    "test/widget_test.dart": "a5cfdae1b0c293a0389513c9de1abbef509d2769d521620e9c378fe915026cd9"
   },
+  "flutterVersion": "3.44.8",
+  "dartVersion": "3.12.2",
+  "analyze": "No issues found",
+  "tests": [
+    {
+      "locale": "en",
+      "passed": 2,
+      "result": "passed",
+      "testOutputSha256": "144108e69633d932ff2f31531ab9b4ab1c55769416dcd4d5472031c530afacf6"
+    }
+  ],
+  "androidDebugBuild": "passed",
+  "applicationId": "com.cc.rentalreport",
+  "minSdk": 24,
+  "targetSdk": 36,
+  "apkSha256": "9fbeb61aa2134da3aa6a7e7b0fa4108e69fe30f383c392400f4027cbacc2379c",
   "existingAdsOrAnalyticsSdkFound": false,
-  "screenshotsSource": "Real iOS raster references from app-store-shot-factory, without translated UI; draft only.",
-  "releaseIssues": [
-    "重要：AppModel.empty() 每次启动创建空模型；未实现跨重启记录保存。上架前补持久化并验证重启及升级。",
-    "没有入住与退租自动对照实现，不宣传自动损坏对比。",
-    "当前代码中的 PDF 包含照片、说明和签名；仍需在 Android 验证拍照、签名、导出和分享。"
-  ]
+  "screenshotsSource": "Real English Android emulator PNGs; native debug-only scene bridge; real app widgets with deterministic sample data.",
+  "functionalBoundariesAndReleaseSteps": [
+    "参与者确认使用输入的姓名和时间，没有手写签名轨迹。",
+    "没有入住与退租自动对比功能。",
+    "提交前发布 Android 英文隐私页，并核对客服邮箱和最终签名包。",
+    "在另一台电脑配置本地上传密钥，构建并验证 release AAB。"
+  ],
+  "recordPersistence": "records, issue notes, photo paths, participant names and export settings verified after loading a fresh model",
+  "androidPdfExport": {
+    "checkedAt": "2026-10-12T10:46:43.111506+00:00",
+    "source": "Actual Android Export PDF button; system share sheet opened",
+    "pages": 2,
+    "imagesPerPage": [
+      3,
+      0
+    ],
+    "roomPhotosNotesAndTypedNamesPresent": true,
+    "pageNumbersPresent": true,
+    "sha256": "bc175a3e6b8ff938352b77625b1bd537cf8e60950531d2b34cf16c3b9dcf657a",
+    "apkSha256": "9fbeb61aa2134da3aa6a7e7b0fa4108e69fe30f383c392400f4027cbacc2379c",
+    "pdfBytes": 11407177
+  }
 }

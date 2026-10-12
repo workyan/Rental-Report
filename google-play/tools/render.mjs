@@ -4,6 +4,7 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const args = process.argv.slice(2);
 const finalMode = args.includes('--final');
@@ -33,11 +34,20 @@ if (finalMode) {
   if (provenance.platform !== 'android' || provenance.locale !== 'en-US' || !provenance.build || !provenance.device) {
     throw new Error('Final screenshots require Android/en-US capture provenance, build and device.');
   }
+  if (provenance.applicationId !== design.applicationId) throw new Error('Android package does not match the listing.');
   for (const slide of plan.slides) {
     const file = path.join(base, 'source/android', slide.androidFile);
+    const record = provenance.slides.find(x => x.id === slide.id && x.scene === slide.scene && x.file === slide.androidFile);
+    const hash = createHash('sha256').update(await fs.readFile(file)).digest('hex');
+    if (!record || record.sha256 !== hash || !record.runtimeErrorLogEmpty) throw new Error('Missing or changed capture provenance: ' + file);
     const meta = await sharp(file).metadata();
     if (meta.width < 1080 || meta.height < 1080) throw new Error('Android capture must be at least 1080px: ' + file);
   }
+}
+
+for (const [field, filename] of [['title','title.txt'], ['shortDescription','short-description.txt'], ['fullDescription','full-description.txt']]) {
+  const text = (await fs.readFile(path.join(base,'listing/en-US',filename),'utf8')).trim();
+  if (text !== metadata[field].trim()) throw new Error('Listing TXT and metadata disagree: ' + filename);
 }
 
 await fs.mkdir(outdir, { recursive: true });
@@ -45,6 +55,11 @@ await fs.mkdir(graphics, { recursive: true });
 const font = await uri(path.join(base, 'fonts/Manrope.ttf'), 'font/ttf');
 const icon = await uri(path.join(base, design.icon));
 const visual = await uri(path.join(base, design.image));
+let editorialFont = '';
+if (design.brand === 'Rental Report') {
+  const serif = await uri(path.join(base, 'fonts/SourceSerif4.ttf'), 'font/ttf');
+  editorialFont = `@font-face{font-family:SourceSerif;src:url('${serif}') format('truetype');font-weight:200 900}.poster .headline{font-family:SourceSerif,Georgia,serif;font-weight:650;letter-spacing:-2.9px;font-size:80px;line-height:1.05}`;
+}
 const css = `@font-face{font-family:Manrope;src:url('${font}') format('truetype');font-weight:200 800}*{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:Manrope,Arial,sans-serif;color:${design.dark}}.canvas{position:relative;overflow:hidden;background:${design.bg}}.brand{display:flex;align-items:center;gap:17px;font-size:27px;font-weight:750;letter-spacing:-.6px}.brand img{width:56px;height:56px;border-radius:12px}.headline{margin:0;font-size:78px;line-height:1.03;font-weight:800;letter-spacing:-3.5px}.screen{position:absolute;overflow:hidden;background:#fff;border-radius:10px;box-shadow:0 18px 55px #091b3026}.screen img{display:block;width:100%;height:100%;object-fit:contain}.hairline{height:1px;background:currentColor;opacity:.14}.feature .brand{font-size:23px}.feature .brand img{width:48px;height:48px}.feature .headline{font-size:53px;line-height:1.1;letter-spacing:-2.4px}.feature{width:1024px;height:500px}.poster{width:1080px;height:1920px}.dark{background:${design.dark};color:#fff}.number{font-size:20px;letter-spacing:2px;opacity:.5}.footer{position:absolute;bottom:20px;left:64px;right:64px;height:1px;background:currentColor;opacity:.13}`;
 const brand = `<div class="brand"><img src="${icon}" alt="">${escape(design.brand)}</div>`;
 
@@ -70,22 +85,21 @@ try {
     let input=sharp(source);const original=await input.metadata();
     let w=original.width,h=original.height;
     // Remove iOS system chrome from a clearly labelled reference draft only.
-    if (!finalMode) {
-      const top=Math.round(w*.12),bottom=Math.round(w*.065);
-      h-=top+bottom;input=input.extract({left:0,top,width:w,height:h});
-    }
+    const top=finalMode ? 64 : Math.round(w*.12);
+    const bottom=finalMode ? 96 : Math.round(w*.065);
+    h-=top+bottom;input=input.extract({left:0,top,width:w,height:h});
     const buffer=await input.flatten({background:'#ffffff'}).png().toBuffer();
     const image='data:image/png;base64,'+buffer.toString('base64');
-    const imageHeight=Math.min(1530,1520);
+    const imageHeight=1520;
     const imageWidth=Math.min(944,Math.round(imageHeight*w/h));
     const actualHeight=Math.round(imageWidth*h/w);
     const dark=i===3;
     const aligned=i%3===1;
     const left=aligned?70:Math.round((1080-imageWidth)/2);
-    const html=`<div id="capture" class="canvas poster ${dark?'dark':''}"><header style="position:absolute;left:64px;right:64px;top:48px;display:flex;justify-content:space-between;align-items:center">${brand}<span class="number">${String(i+1).padStart(2,'0')}</span></header><h1 class="headline" style="position:absolute;left:64px;top:138px;max-width:952px">${lines(slide.headline)}</h1><div class="hairline" style="position:absolute;left:64px;right:64px;top:324px"></div><div class="screen" style="left:${left}px;top:355px;width:${imageWidth}px;height:${actualHeight}px"><img src="${image}" alt="${escape(slide.altText)}"></div><div class="footer"></div></div>`;
+    const html=`<div id="capture" class="canvas poster ${dark?'dark':''}" style="${design.brand==='Sheet Metal Layout'?'background-image:linear-gradient(#537b9f0a 1px,transparent 1px),linear-gradient(90deg,#537b9f0a 1px,transparent 1px);background-size:48px 48px':''}"><header style="position:absolute;left:64px;right:64px;top:48px;display:flex;justify-content:space-between;align-items:center">${brand}<span class="number">${String(i+1).padStart(2,'0')}</span></header><h1 class="headline" style="position:absolute;left:64px;top:138px;max-width:952px">${lines(slide.headline)}</h1><div class="hairline" style="position:absolute;left:64px;right:64px;top:324px"></div><div class="screen" style="left:${left}px;top:355px;width:${imageWidth}px;height:${actualHeight}px"><img src="${image}" alt="${escape(slide.altText)}"></div><div class="footer"></div></div>`;
     const file=path.join(outdir,slide.id+'-1080x1920.png');
     await exportHtml(page,html,1080,1920,file);
-    evidence.push({file:path.relative(base,file),source:path.relative(base,source),sourcePlatform:finalMode?'android':'ios-reference',locale:finalMode?'en-US':metadata.title.startsWith('Rental')?'en-US':'zh-CN',headline:slide.headline,width:1080,height:1920,status:finalMode?'android-capture-review-required':'draft-not-for-upload'});
+    evidence.push({file:path.relative(base,file),source:path.relative(base,source),sourcePlatform:finalMode?'android':'ios-reference',crop:{top,bottom},locale:finalMode?'en-US':metadata.title.startsWith('Rental')?'en-US':'zh-CN',headline:slide.headline,width:1080,height:1920,status:finalMode?'android-capture-review-required':'draft-not-for-upload'});
   }
   const thumbs=[];for(let i=0;i<evidence.length;i++)thumbs.push({input:await sharp(path.join(base,evidence[i].file)).resize(216,384).toBuffer(),left:i*216,top:0});
   await sharp({create:{width:216*thumbs.length,height:384,channels:3,background:'#dfe5ea'}}).composite(thumbs).png().toFile(path.join(base,finalMode?'contact-sheet-final.png':'contact-sheet-draft.png'));
@@ -101,10 +115,10 @@ function escape(s){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;
 function lines(s){return s.split('\n').map(escape).join('<br>');}
 async function uri(file,type='image/png'){return 'data:'+type+';base64,'+(await fs.readFile(file)).toString('base64');}
 async function exportHtml(page,markup,width,height,file){
-  await page.setContent(`<!doctype html><html lang="en"><head><meta charset="utf-8"><style>${css}</style></head><body>${markup}</body></html>`);
+  await page.setContent(`<!doctype html><html lang="en"><head><meta charset="utf-8"><style>${css}${editorialFont}</style></head><body>${markup}</body></html>`);
   await page.addScriptTag({path:libraryPath});
   await page.evaluate(async()=>{await document.fonts.ready;await Promise.all(Array.from(document.images).map(i=>i.decode()));});
-  const problems=await page.evaluate(()=>{const root=document.querySelector('#capture');const r=root.getBoundingClientRect();return Array.from(root.querySelectorAll('.headline,.brand')).filter(e=>{const b=e.getBoundingClientRect();return b.left<r.left||b.right>r.right||b.top<r.top||b.bottom>r.bottom||e.scrollWidth>e.clientWidth+2;}).map(e=>e.textContent);});
+  const problems=await page.evaluate(()=>{const root=document.querySelector('#capture');const r=root.getBoundingClientRect();const issues=Array.from(root.querySelectorAll('.headline,.brand')).filter(e=>{const b=e.getBoundingClientRect();return b.left<r.left||b.right>r.right||b.top<r.top||b.bottom>r.bottom||e.scrollWidth>e.clientWidth+2;}).map(e=>e.textContent);const screen=root.querySelector('.screen');if(screen){const s=screen.getBoundingClientRect();const h=root.querySelector('.headline').getBoundingClientRect();if(h.bottom+24>s.top)issues.push('Headline overlaps screenshot');if(s.width/r.width<.7)issues.push('App UI is too small');if(s.bottom>r.bottom-24)issues.push('Screenshot exceeds safe area');}return issues;});
   if(problems.length)throw new Error('Text overflow: '+problems.join(', '));
   const encoded=await page.evaluate(async({width,height})=>{const e=document.querySelector('#capture');const options={width,height,pixelRatio:1,cacheBust:false};await window.htmlToImage.toPng(e,options);return await window.htmlToImage.toPng(e,options);},{width,height});
   await sharp(Buffer.from(encoded.split(',')[1],'base64')).flatten({background:design.bg}).removeAlpha().png().toFile(file);
